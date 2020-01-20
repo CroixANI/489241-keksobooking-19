@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
-* Студент: [Александр Ничипорович](https://up.htmlacademy.ru/javascript/19/user/489241).
-* Наставник: `Неизвестно`.
+- Студент: [Александр Ничипорович](https://up.htmlacademy.ru/javascript/19/user/489241).
+- Наставник: [Евгений Казаков](https://htmlacademy.ru/profile/id343981).
 
 ---
 
