@@ -1,12 +1,15 @@
 'use strict';
 
 // Map render zone
-var MIN_X = 100; // TODO - where to get this one?
-var MAX_X = 800; // TODO - where to get this one?
+var MIN_X = 100;
+var MAX_X = 800;
 var MIN_Y = 130;
 var MAX_Y = 630;
 
 // Data mocks constants
+var TITLES = ['Всемирный торговый центр 1', 'Эмпайр-стейт-билдинг', 'Парк-авеню, 432', 'Хадсон-Ярдс, 30',
+  'Башня Банка Америки', 'Всемирный торговый центр 3', 'Крайслер-билдинг', 'Нью-Йорк-Таймс-билдинг', 'Ситигруп-центр',
+  'Нью-Йорк-бай-Гери', 'Трамп-уорлд-тауэр', 'Уан Манхэттен Сквер', 'Сити-спайр-центр'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var APARTMENT_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var CHECK_IN_TIMES = ['12:00', '13:00', '14:00'];
@@ -20,6 +23,8 @@ var MIN_HOTELS = 10;
 var MAX_HOTELS = 10;
 var HOTEL_PHOTO_FORMAT = 'http://o0.github.io/assets/images/tokyo/hotel{{x}}.jpg';
 var INITIAL_MOCKS_NUMBER = 8;
+var MIN_PRICE = 10000;
+var MAX_PRICE = 1000000;
 
 // Render constants
 var PIN_HEIGHT = 70;
@@ -42,14 +47,11 @@ function getRandomArrayItem(array) {
 
 // took from here https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
 function shuffleArray(array) {
-  var j;
-  var x;
-  var i;
-  for (i = array.length - 1; i > 0; i--) {
-    j = Math.floor(Math.random() * (i + 1));
-    x = array[i];
-    array[i] = array[j];
-    array[j] = x;
+  for (var i = array.length - 1; i > 0; i--) {
+    var swapIndex = random(0, i);
+    var currentItem = array[i];
+    array[i] = array[swapIndex];
+    array[swapIndex] = currentItem;
   }
   return array;
 }
@@ -92,9 +94,9 @@ function getRandomApartment(index) {
       'avatar': AVATAR_URL_FORMAT.replace('{{x}}', index + 1)
     },
     'offer': {
-      'title': 'test title',
+      'title': getRandomArrayItem(TITLES),
       'address': '',
-      'price': random(10000, 100000),
+      'price': random(MIN_PRICE, MAX_PRICE),
       'type': getRandomArrayItem(APARTMENT_TYPES),
       'rooms': random(MIN_ROOM_NUMBER, MAX_ROOM_NUMBER),
       'guests': random(MIN_GUAESTS_ALLOWED, MAX_GUAESTS_ALLOWED),
@@ -125,10 +127,17 @@ function generateApartments() {
   return data;
 }
 
+function getPinCenterPosition(data) {
+  return {
+    x: data.location.x - PIN_WIDTH / 2,
+    y: data.location.y - PIN_HEIGHT
+  };
+}
+
 function renderPin(pinTemplate, data) {
   var element = pinTemplate.cloneNode(true);
-
-  element.setAttribute('style', 'left: ' + (data.location.x - PIN_WIDTH / 2) + 'px; top: ' + (data.location.y - PIN_HEIGHT) + 'px;');
+  var center = getPinCenterPosition(data);
+  element.setAttribute('style', 'left: ' + center.x + 'px; top: ' + center.y + 'px;');
   var imgElement = element.querySelector('img');
   imgElement.src = data.author.avatar;
   imgElement.alt = data.offer.title;
