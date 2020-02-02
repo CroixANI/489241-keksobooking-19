@@ -171,33 +171,36 @@ function renderPin(pinTemplate, data) {
 }
 
 function renderCard(cardTemplate, data) {
-  var element = cardTemplate.cloneNode(true);
-  element.querySelector(CARD_TITLE_SELECTOR).textContent = data.offer.title;
-  element.querySelector(CARD_ADDRESS_SELECTOR).textContent = data.offer.address;
-  element.querySelector(CARD_PRICE_SELECTOR).textContent = CARD_PRICE_FORMAT.replace('{{x}}', data.offer.price);
-  element.querySelector(CARD_TYPE_SELECTOR).textContent = APARTMENT_TYPES_LOCALIZATION[data.offer.type];
-  element.querySelector(CARD_CAPACITY_SELECTOR).textContent = CARD_CAPACITY_FORMAT
+  var cardElement = cardTemplate.cloneNode(true);
+  cardElement.querySelector(CARD_TITLE_SELECTOR).textContent = data.offer.title;
+  cardElement.querySelector(CARD_ADDRESS_SELECTOR).textContent = data.offer.address;
+  cardElement.querySelector(CARD_PRICE_SELECTOR).textContent = CARD_PRICE_FORMAT.replace('{{x}}', data.offer.price);
+  cardElement.querySelector(CARD_TYPE_SELECTOR).textContent = APARTMENT_TYPES_LOCALIZATION[data.offer.type];
+  cardElement.querySelector(CARD_CAPACITY_SELECTOR).textContent = CARD_CAPACITY_FORMAT
     .replace('{{rooms}}', data.offer.rooms)
     .replace('{{guests}}', data.offer.guests);
-  element.querySelector(CARD_TIME_SELECTOR).textContent = CARD_TIME_FORMAT
+  cardElement.querySelector(CARD_TIME_SELECTOR).textContent = CARD_TIME_FORMAT
     .replace('{{checkin}}', data.offer.checkin)
     .replace('{{checkout}}', data.offer.checkout);
-  var featuresContainer = element.querySelector(CARD_FEATURES_SELECTOR);
-  for (var i = 0; i < FEATURES.length; i++) {
-    var feature = FEATURES[i];
-    if (data.offer.features.indexOf(feature) < 0) {
-      featuresContainer.querySelector(CARD_FEATURE_SELECTOR_FORMAT.replace('{{x}}', feature)).remove();
-    }
-  }
-  element.querySelector(CARD_DESCRIPTION_SELECTOR).textContent = data.offer.description;
-  var photosElement = element.querySelector(CARD_PHOTOS_SELECTOR);
-  var photoElement = element.querySelector(CARD_PHOTO_SELECTOR);
-  if (data.offer.photos.length > 0) {
+  cardElement.querySelector(CARD_DESCRIPTION_SELECTOR).textContent = data.offer.description;
+  cardElement.querySelector(CARD_AVATAR_SELECTOR).src = data.author.avatar;
+
+  fillFeatures(cardElement, data);
+  fillPhotos(cardElement, data);
+
+  return cardElement;
+}
+
+function fillPhotos(cardElement, data) {
+  var photosElement = cardElement.querySelector(CARD_PHOTOS_SELECTOR);
+  var photoElement = cardElement.querySelector(CARD_PHOTO_SELECTOR);
+  var photos = data.offer.photos;
+  if (photos.length > 0) {
     var fragment = document.createDocumentFragment();
-    photoElement.src = data.offer.photos[0];
-    for (var j = 1; j < data.offer.photos.length; j++) {
+    photoElement.src = photos[0];
+    for (var j = 1; j < photos.length; j++) {
       var newPhotoElement = photoElement.cloneNode(true);
-      newPhotoElement.src = data.offer.photos[j];
+      newPhotoElement.src = photos[j];
       fragment.appendChild(newPhotoElement);
     }
     if (fragment.childElementCount > 0) {
@@ -206,13 +209,21 @@ function renderCard(cardTemplate, data) {
   } else {
     photoElement.remove();
   }
-
-  element.querySelector(CARD_AVATAR_SELECTOR).src = data.author.avatar;
-
-  return element;
 }
 
-function renderCards(mapElement, data) {
+function fillFeatures(cardElement, data) {
+  var featuresContainer = cardElement.querySelector(CARD_FEATURES_SELECTOR);
+  for (var i = 0; i < FEATURES.length; i++) {
+    var feature = FEATURES[i];
+    if (data.offer.features.indexOf(feature) < 0) {
+      featuresContainer.querySelector(CARD_FEATURE_SELECTOR_FORMAT.replace('{{x}}', feature)).remove();
+    }
+  }
+}
+
+function renderCards(data) {
+  var mapElement = document.querySelector(MAP_SELECTOR);
+  mapElement.classList.remove(MAP_FADE_CLASS);
   var filterElement = document.querySelector(MAP_FILTER_SELECTOR);
   var cardTemplate = document.querySelector(CARD_TEMPLATE).content.querySelector(CARD_TEMPLATE_POPUP);
   mapElement.insertBefore(renderCard(cardTemplate, data[0]), filterElement);
@@ -231,12 +242,9 @@ function renderRandomPins(data) {
 }
 
 function showMap() {
-  var mapElement = document.querySelector(MAP_SELECTOR);
-  mapElement.classList.remove(MAP_FADE_CLASS);
-
   var data = generateApartments();
   renderRandomPins(data);
-  renderCards(mapElement, data);
+  renderCards(data);
 }
 
 showMap();
