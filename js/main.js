@@ -46,6 +46,21 @@ var INITIAL_MOCKS_NUMBER = 8;
 var MIN_PRICE = 10000;
 var MAX_PRICE = 1000000;
 var MIN_FEATURES = 2;
+var ROOMS_TO_GUESTS = {
+  '1': 1,
+  '2': 2,
+  '3': 3,
+  '100': 0
+};
+var GUESTS_TO_ROOMS = {
+  '0': 100,
+  '1': 1,
+  '2': 2,
+  '3': 3
+};
+var NOT_FOR_GUESTS_FLAG = 0;
+var MESSAGE_INCORRECT_ROOMS_NUMBER = 'Не верное число комнат.';
+var MESSAGE_INCORRECT_GUESTS_NUMBER = 'Не верное число гостей.';
 
 // Render constants
 var PIN_HEIGHT = 70;
@@ -293,54 +308,48 @@ function onMapMainPinKeyDown(evt) {
   }
 }
 
-function onMapMainPinMouseUp() {
-}
-
 function onAdFormApartmentTypeChange(evt) {
   setPriceMinValue(evt.currentTarget.value);
 }
 
 function onAdFormRoomsNumberChange(evt) {
-  validateGuestsNumberField(evt.currentTarget);
+  validateGuestsNumberField(evt.currentTarget.value);
 }
 
 function onAdFormGuestsNumberChange(evt) {
-  validateRoomsNumberField(evt.currentTarget);
+  validateRoomsNumberField(evt.currentTarget.value);
 }
 
 /* ========= VALIDATION =========== */
 
-function validateGuestsNumberField(selectElement) {
+function validateGuestsNumberField(currentRoomsNumber) {
   var guestsNumberElement = adFormElement.querySelector(AD_FORM_CAPACITY_FIELD_SELECTOR);
-  var selectedOption = getSelectedOption(selectElement);
-  var maxGuests = parseInt(selectedOption.dataset.maxGuests, 10);
   var guestsNumber = parseInt(guestsNumberElement.value, 10);
-  if (guestsNumber > maxGuests) {
-    guestsNumberElement.setCustomValidity('Не верное число гостей.');
-    guestsNumberElement.reportValidity();
+  var roomsCapacity = ROOMS_TO_GUESTS[currentRoomsNumber];
+  if ((roomsCapacity === NOT_FOR_GUESTS_FLAG && roomsCapacity !== guestsNumber)
+    || guestsNumber > roomsCapacity) {
+    guestsNumberElement.setCustomValidity(MESSAGE_INCORRECT_GUESTS_NUMBER);
   } else {
     guestsNumberElement.setCustomValidity('');
   }
+  guestsNumberElement.reportValidity();
 }
 
-function validateRoomsNumberField(selectElement) {
+function validateRoomsNumberField(currentGuestsNumber) {
   var roomsNumberElement = adFormElement.querySelector(AD_FORM_ROOMS_NUMBER_FIELD_SELECTOR);
-  var selectedOption = getSelectedOption(selectElement);
-  var minRooms = parseInt(selectedOption.dataset.minRooms, 10);
   var roomsNumber = parseInt(roomsNumberElement.value, 10);
-  if (minRooms > roomsNumber) {
-    roomsNumberElement.setCustomValidity('Не верное число комнат.');
-    roomsNumberElement.reportValidity();
+  var minRooms = GUESTS_TO_ROOMS[currentGuestsNumber];
+  var roomsCapacity = ROOMS_TO_GUESTS[roomsNumber];
+  if ((roomsCapacity === NOT_FOR_GUESTS_FLAG && minRooms !== roomsNumber)
+    || currentGuestsNumber > minRooms) {
+    roomsNumberElement.setCustomValidity(MESSAGE_INCORRECT_ROOMS_NUMBER);
   } else {
     roomsNumberElement.setCustomValidity('');
   }
+  roomsNumberElement.reportValidity();
 }
 
 /* ========= SHOW/HIDE =========== */
-
-function getSelectedOption(selectElement) {
-  return selectElement.options[selectElement.selectedIndex];
-}
 
 function setPriceMinValue(apartmentType) {
   if (!apartmentType) {
@@ -371,13 +380,6 @@ function getMainPinAddress() {
   return position.x + ', ' + position.y;
 }
 
-function configureAdFormFields() {
-  configureAddressField();
-  configureApartmentTypeField();
-  configureRoomsNumberField();
-  configureGuestsNumberField();
-}
-
 function configureRoomsNumberField() {
   var roomsNumberElement = adFormElement.querySelector(AD_FORM_ROOMS_NUMBER_FIELD_SELECTOR);
   roomsNumberElement.addEventListener('change', onAdFormRoomsNumberChange);
@@ -398,6 +400,13 @@ function configureApartmentTypeField() {
   typeElement.addEventListener('change', onAdFormApartmentTypeChange);
 }
 
+function configureAdFormFields() {
+  configureAddressField();
+  configureApartmentTypeField();
+  configureRoomsNumberField();
+  configureGuestsNumberField();
+}
+
 function hideMap() {
   mapElement.classList.add(MAP_FADE_CLASS);
 }
@@ -416,7 +425,7 @@ function setDisabledAttributeForFormFieldsets(formElement, disabledFlag) {
   }
 }
 
-function setDisabledStateForAdForm(disabledFlag) {
+function toggleDisabledStateForAdForm(disabledFlag) {
   setDisabledAttributeForFormFieldsets(adFormElement, disabledFlag);
   if (disabledFlag) {
     adFormElement.classList.add(AD_FORM_DISABLED_CLASS);
@@ -433,7 +442,7 @@ function setDisabledStateForMapFilterForm(disabledFlag) {
 function configureActivePageState() {
   isMapActive = true;
   showMap();
-  setDisabledStateForAdForm(false);
+  toggleDisabledStateForAdForm(false);
   setDisabledStateForMapFilterForm(false);
   configureAdFormFields();
 }
@@ -441,13 +450,12 @@ function configureActivePageState() {
 function configureDisabledPageState() {
   isMapActive = false;
   hideMap();
-  setDisabledStateForAdForm(true);
+  toggleDisabledStateForAdForm(true);
   setDisabledStateForMapFilterForm(true);
   configureAddressField();
 }
 
 function configureMapMainPinEventListeners() {
-  mainPinElement.addEventListener('mouseup', onMapMainPinMouseUp);
   mainPinElement.addEventListener('mousedown', onMapMainPinMouseDown);
   mainPinElement.addEventListener('keydown', onMapMainPinKeyDown);
 }
