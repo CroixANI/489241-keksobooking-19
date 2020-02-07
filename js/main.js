@@ -107,6 +107,7 @@ var ENTER_KEY = 'Enter';
 
 /* ========= VERIABLES =========== */
 
+var data;
 var mapElement = document.querySelector(MAP_SELECTOR);
 var adFormElement = document.querySelector(AD_FORM_SELECTOR);
 var mainPinElement = document.querySelector(MAP_MAIN_PIN_SELECTOR);
@@ -196,60 +197,60 @@ function getRandomApartment(index) {
 }
 
 function generateApartments() {
-  var data = [];
+  var result = [];
 
   for (var i = 0; i < INITIAL_MOCKS_NUMBER; i++) {
-    data.push(getRandomApartment(i));
+    result.push(getRandomApartment(i));
   }
 
-  return data;
+  return result;
 }
 
 /* ========= RENDERING =========== */
 
-function getPinCenterPosition(data) {
+function getPinCenterPosition(apartmentData) {
   return {
-    x: data.location.x - PIN_WIDTH / 2,
-    y: data.location.y - PIN_HEIGHT
+    x: apartmentData.location.x - PIN_WIDTH / 2,
+    y: apartmentData.location.y - PIN_HEIGHT
   };
 }
 
-function renderPin(pinTemplate, data) {
+function renderPin(pinTemplate, apartmentData) {
   var element = pinTemplate.cloneNode(true);
-  var center = getPinCenterPosition(data);
+  var center = getPinCenterPosition(apartmentData);
   element.setAttribute('style', 'left: ' + center.x + 'px; top: ' + center.y + 'px;');
   var imgElement = element.querySelector('img');
-  imgElement.src = data.author.avatar;
-  imgElement.alt = data.offer.title;
+  imgElement.src = apartmentData.author.avatar;
+  imgElement.alt = apartmentData.offer.title;
 
   return element;
 }
 
-function renderCard(cardTemplate, data) {
+function renderCard(cardTemplate, apartmentData) {
   var cardElement = cardTemplate.cloneNode(true);
-  cardElement.querySelector(CARD_TITLE_SELECTOR).textContent = data.offer.title;
-  cardElement.querySelector(CARD_ADDRESS_SELECTOR).textContent = data.offer.address;
-  cardElement.querySelector(CARD_PRICE_SELECTOR).textContent = CARD_PRICE_FORMAT.replace('{{x}}', data.offer.price);
-  cardElement.querySelector(CARD_TYPE_SELECTOR).textContent = APARTMENT_TYPES_DATA[data.offer.type].title;
+  cardElement.querySelector(CARD_TITLE_SELECTOR).textContent = apartmentData.offer.title;
+  cardElement.querySelector(CARD_ADDRESS_SELECTOR).textContent = apartmentData.offer.address;
+  cardElement.querySelector(CARD_PRICE_SELECTOR).textContent = CARD_PRICE_FORMAT.replace('{{x}}', apartmentData.offer.price);
+  cardElement.querySelector(CARD_TYPE_SELECTOR).textContent = APARTMENT_TYPES_DATA[apartmentData.offer.type].title;
   cardElement.querySelector(CARD_CAPACITY_SELECTOR).textContent = CARD_CAPACITY_FORMAT
-    .replace('{{rooms}}', data.offer.rooms)
-    .replace('{{guests}}', data.offer.guests);
+    .replace('{{rooms}}', apartmentData.offer.rooms)
+    .replace('{{guests}}', apartmentData.offer.guests);
   cardElement.querySelector(CARD_TIME_SELECTOR).textContent = CARD_TIME_FORMAT
-    .replace('{{checkin}}', data.offer.checkin)
-    .replace('{{checkout}}', data.offer.checkout);
-  cardElement.querySelector(CARD_DESCRIPTION_SELECTOR).textContent = data.offer.description;
-  cardElement.querySelector(CARD_AVATAR_SELECTOR).src = data.author.avatar;
+    .replace('{{checkin}}', apartmentData.offer.checkin)
+    .replace('{{checkout}}', apartmentData.offer.checkout);
+  cardElement.querySelector(CARD_DESCRIPTION_SELECTOR).textContent = apartmentData.offer.description;
+  cardElement.querySelector(CARD_AVATAR_SELECTOR).src = apartmentData.author.avatar;
 
-  fillFeatures(cardElement, data);
-  fillPhotos(cardElement, data);
+  fillFeatures(cardElement, apartmentData);
+  fillPhotos(cardElement, apartmentData);
 
   return cardElement;
 }
 
-function fillPhotos(cardElement, data) {
+function fillPhotos(cardElement, apartmentData) {
   var photosElement = cardElement.querySelector(CARD_PHOTOS_SELECTOR);
   var photoElement = cardElement.querySelector(CARD_PHOTO_SELECTOR);
-  var photos = data.offer.photos;
+  var photos = apartmentData.offer.photos;
   if (photos.length > 0) {
     var fragment = document.createDocumentFragment();
     photoElement.src = photos[0];
@@ -266,29 +267,29 @@ function fillPhotos(cardElement, data) {
   }
 }
 
-function fillFeatures(cardElement, data) {
+function fillFeatures(cardElement, apartmentData) {
   var featuresContainer = cardElement.querySelector(CARD_FEATURES_SELECTOR);
   for (var i = 0; i < FEATURES.length; i++) {
     var feature = FEATURES[i];
-    if (data.offer.features.indexOf(feature) < 0) {
+    if (apartmentData.offer.features.indexOf(feature) < 0) {
       featuresContainer.querySelector(CARD_FEATURE_SELECTOR_FORMAT.replace('{{x}}', feature)).remove();
     }
   }
 }
 
-function renderCards(mapElement, data) {
+function renderCards(apartmentsData) {
   var filterElement = document.querySelector(MAP_FILTER_SELECTOR);
   var cardTemplate = document.querySelector(CARD_TEMPLATE).content.querySelector(CARD_TEMPLATE_POPUP);
-  mapElement.insertBefore(renderCard(cardTemplate, data[0]), filterElement);
+  mapElement.insertBefore(renderCard(cardTemplate, apartmentsData[0]), filterElement);
 }
 
-function renderRandomPins(data) {
+function renderRandomPins(apartmentData) {
   var mapPinsElement = document.querySelector(PINS_CONTAINER_SELECTOR);
   var pinTemplate = document.querySelector(PIN_TEMPLATE_SELECTOR).content.querySelector(PIN_TEMPLATE_BUTTON_SELECTOR);
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < data.length; i++) {
-    fragment.appendChild(renderPin(pinTemplate, data[i]));
+  for (var i = 0; i < apartmentData.length; i++) {
+    fragment.appendChild(renderPin(pinTemplate, apartmentData[i]));
   }
 
   mapPinsElement.appendChild(fragment);
@@ -412,7 +413,7 @@ function hideMap() {
 }
 
 function showMap() {
-  var data = generateApartments();
+  data = data || generateApartments();
   renderRandomPins(data);
   mapElement.classList.remove(MAP_FADE_CLASS);
   // renderCards(data);
