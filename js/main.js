@@ -100,7 +100,7 @@ var ENTER_KEY = 'Enter';
 
 /* ========= VERIABLES =========== */
 
-var data;
+var apartments;
 var mapElement = document.querySelector(MAP_SELECTOR);
 var adFormElement = document.querySelector(AD_FORM_SELECTOR);
 var mainPinElement = document.querySelector(MAP_MAIN_PIN_SELECTOR);
@@ -394,8 +394,7 @@ function hideMap() {
 }
 
 function showMap() {
-  data = data || generateApartments();
-  renderRandomPins(data);
+  renderRandomPins(apartments);
   mapElement.classList.remove(MAP_FADE_CLASS);
   // renderCards(data);
 }
@@ -443,6 +442,7 @@ function configureMapMainPinEventListeners() {
 }
 
 function initialConfiguration() {
+  apartments = generateApartments();
   configureMapMainPinEventListeners();
   configureDisabledPageState();
   setPriceMinValue();
