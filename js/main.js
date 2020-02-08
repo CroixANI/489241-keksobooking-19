@@ -52,14 +52,7 @@ var ROOMS_TO_GUESTS = {
   '3': 3,
   '100': 0
 };
-var GUESTS_TO_ROOMS = {
-  '0': 100,
-  '1': 1,
-  '2': 2,
-  '3': 3
-};
 var NOT_FOR_GUESTS_FLAG = 0;
-var MESSAGE_INCORRECT_ROOMS_NUMBER = 'Не верное число комнат.';
 var MESSAGE_INCORRECT_GUESTS_NUMBER = 'Не верное число гостей.';
 
 // Render constants
@@ -313,41 +306,29 @@ function onAdFormApartmentTypeChange(evt) {
   setPriceMinValue(evt.currentTarget.value);
 }
 
-function onAdFormRoomsNumberChange(evt) {
-  validateGuestsNumberField(evt.currentTarget.value);
+function onAdFormRoomsNumberChange() {
+  validateGuestsNumberField();
 }
 
-function onAdFormGuestsNumberChange(evt) {
-  validateRoomsNumberField(evt.currentTarget.value);
+function onAdFormGuestsNumberChange() {
+  validateGuestsNumberField();
 }
 
 /* ========= VALIDATION =========== */
 
-function validateGuestsNumberField(currentRoomsNumber) {
+function validateGuestsNumberField() {
+  var roomsNumberElement = adFormElement.querySelector(AD_FORM_ROOMS_NUMBER_FIELD_SELECTOR);
   var guestsNumberElement = adFormElement.querySelector(AD_FORM_CAPACITY_FIELD_SELECTOR);
   var guestsNumber = parseInt(guestsNumberElement.value, 10);
-  var roomsCapacity = ROOMS_TO_GUESTS[currentRoomsNumber];
-  if ((roomsCapacity === NOT_FOR_GUESTS_FLAG && roomsCapacity !== guestsNumber)
+  var roomsNumber = parseInt(roomsNumberElement.value, 10);
+  var roomsCapacity = ROOMS_TO_GUESTS[roomsNumber];
+  if ((guestsNumber === NOT_FOR_GUESTS_FLAG && roomsCapacity !== guestsNumber)
     || guestsNumber > roomsCapacity) {
     guestsNumberElement.setCustomValidity(MESSAGE_INCORRECT_GUESTS_NUMBER);
   } else {
     guestsNumberElement.setCustomValidity('');
   }
   guestsNumberElement.reportValidity();
-}
-
-function validateRoomsNumberField(currentGuestsNumber) {
-  var roomsNumberElement = adFormElement.querySelector(AD_FORM_ROOMS_NUMBER_FIELD_SELECTOR);
-  var roomsNumber = parseInt(roomsNumberElement.value, 10);
-  var minRooms = GUESTS_TO_ROOMS[currentGuestsNumber];
-  var roomsCapacity = ROOMS_TO_GUESTS[roomsNumber];
-  if ((roomsCapacity === NOT_FOR_GUESTS_FLAG && minRooms !== roomsNumber)
-    || currentGuestsNumber > minRooms) {
-    roomsNumberElement.setCustomValidity(MESSAGE_INCORRECT_ROOMS_NUMBER);
-  } else {
-    roomsNumberElement.setCustomValidity('');
-  }
-  roomsNumberElement.reportValidity();
 }
 
 /* ========= SHOW/HIDE =========== */
