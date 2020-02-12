@@ -63,6 +63,8 @@ var MAP_FILTER_SELECTOR = '.map__filters-container';
 var MAP_MAIN_PIN_SELECTOR = '.map__pin--main';
 var MAP_MAIN_PIN_INACTIVE_SIZE = 65;
 var MAP_FADE_CLASS = 'map--faded';
+var MAP_CARD_POPUP_SELECTOR = '.map__card';
+var MAP_CARD_POPUP_CLOSE_SELECTOR = '.popup__close';
 var PINS_CONTAINER_SELECTOR = '.map__pins';
 var PIN_TEMPLATE_SELECTOR = '#pin';
 var PIN_TEMPLATE_BUTTON_SELECTOR = '.map__pin';
@@ -92,11 +94,14 @@ var AD_FORM_APARTMENT_TYPE_FIELD_SELECTOR = '#type';
 var AD_FORM_PRICE_FIELD_SELECTOR = '#price';
 var AD_FORM_ROOMS_NUMBER_FIELD_SELECTOR = '#room_number';
 var AD_FORM_CAPACITY_FIELD_SELECTOR = '#capacity';
+var AD_FORM_CHECK_IN_FIELD_SELECTOR = '#timein';
+var AD_FORM_CHECK_OUT_FIELD_SELECTOR = '#timeout';
 
 var MAP_FILTERS_SELECTOR = '.map__filters';
 
 var LEFT_MOUSE_BUTTON_CODE = 0;
 var ENTER_KEY = 'Enter';
+var ESC_KEY = 'Escape';
 
 /* ========= VERIABLES =========== */
 
@@ -104,6 +109,7 @@ var apartments;
 var mapElement = document.querySelector(MAP_SELECTOR);
 var adFormElement = document.querySelector(AD_FORM_SELECTOR);
 var mainPinElement = document.querySelector(MAP_MAIN_PIN_SELECTOR);
+var cardTemplate = document.querySelector(CARD_TEMPLATE).content;
 var isMapActive = false;
 
 /* ========= RANDOM DATA =========== */
@@ -208,18 +214,20 @@ function getPinCenterPosition(apartmentData) {
   };
 }
 
-function renderPin(pinTemplate, apartmentData) {
+function renderPin(pinTemplate, index) {
+  var apartmentData = apartments[index];
   var element = pinTemplate.cloneNode(true);
   var center = getPinCenterPosition(apartmentData);
   element.setAttribute('style', 'left: ' + center.x + 'px; top: ' + center.y + 'px;');
   var imgElement = element.querySelector('img');
   imgElement.src = apartmentData.author.avatar;
   imgElement.alt = apartmentData.offer.title;
-
+  element.dataset.index = index;
+  element.addEventListener('click', onMapPinButtonClick);
   return element;
 }
 
-function renderCard(cardTemplate, apartmentData) {
+function renderCard(apartmentData) {
   var cardElement = cardTemplate.cloneNode(true);
   cardElement.querySelector(CARD_TITLE_SELECTOR).textContent = apartmentData.offer.title;
   cardElement.querySelector(CARD_ADDRESS_SELECTOR).textContent = apartmentData.offer.address;
@@ -236,6 +244,9 @@ function renderCard(cardTemplate, apartmentData) {
 
   fillFeatures(cardElement, apartmentData);
   fillPhotos(cardElement, apartmentData);
+
+  var closeButtonElement = cardElement.querySelector(MAP_CARD_POPUP_CLOSE_SELECTOR);
+  closeButtonElement.addEventListener('click', onMapPinCloseButtonClick)
 
   return cardElement;
 }
@@ -270,19 +281,13 @@ function fillFeatures(cardElement, apartmentData) {
   }
 }
 
-function renderCards(apartmentsData) {
-  var filterElement = document.querySelector(MAP_FILTER_SELECTOR);
-  var cardTemplate = document.querySelector(CARD_TEMPLATE).content.querySelector(CARD_TEMPLATE_POPUP);
-  mapElement.insertBefore(renderCard(cardTemplate, apartmentsData[0]), filterElement);
-}
-
-function renderRandomPins(apartmentData) {
+function renderRandomPins() {
   var mapPinsElement = document.querySelector(PINS_CONTAINER_SELECTOR);
   var pinTemplate = document.querySelector(PIN_TEMPLATE_SELECTOR).content.querySelector(PIN_TEMPLATE_BUTTON_SELECTOR);
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < apartmentData.length; i++) {
-    fragment.appendChild(renderPin(pinTemplate, apartmentData[i]));
+  for (var i = 0; i < apartments.length; i++) {
+    fragment.appendChild(renderPin(pinTemplate, i));
   }
 
   mapPinsElement.appendChild(fragment);
@@ -294,6 +299,20 @@ function onMapMainPinMouseDown(evt) {
   if (evt.button === LEFT_MOUSE_BUTTON_CODE) {
     configureActivePageState();
   }
+}
+
+function onPopupEscapePress(evt) {
+  if (evt.key === ESC_KEY) {
+    hidePinCardPopup();
+  }
+}
+
+function onMapPinButtonClick(evt) {
+  showPinCardPopup(apartments[evt.currentTarget.dataset.index]);
+}
+
+function onMapPinCloseButtonClick() {
+  hidePinCardPopup();
 }
 
 function onMapMainPinKeyDown(evt) {
@@ -312,6 +331,14 @@ function onAdFormRoomsNumberChange() {
 
 function onAdFormGuestsNumberChange() {
   validateGuestsNumberField();
+}
+
+function onAdFormCheckInTimeChange(evt) {
+  changeCheckInOutTime(evt.currentTarget.value);
+}
+
+function onAdFormCheckOutTimeChange(evt) {
+  changeCheckInOutTime(evt.currentTarget.value);
 }
 
 /* ========= VALIDATION =========== */
@@ -362,6 +389,20 @@ function getMainPinAddress() {
   return position.x + ', ' + position.y;
 }
 
+function changeCheckInOutTime(newValue) {
+  var checkInElement = adFormElement.querySelector(AD_FORM_CHECK_IN_FIELD_SELECTOR);
+  checkInElement.value = newValue;
+  var checkOutElement = adFormElement.querySelector(AD_FORM_CHECK_OUT_FIELD_SELECTOR);
+  checkOutElement.value = newValue;
+}
+
+function configureCheckInCheckoutFields() {
+  var checkInElement = adFormElement.querySelector(AD_FORM_CHECK_IN_FIELD_SELECTOR);
+  checkInElement.addEventListener('change', onAdFormCheckInTimeChange);
+  var checkOutElement = adFormElement.querySelector(AD_FORM_CHECK_OUT_FIELD_SELECTOR);
+  checkOutElement.addEventListener('change', onAdFormCheckOutTimeChange);
+}
+
 function configureRoomsNumberField() {
   var roomsNumberElement = adFormElement.querySelector(AD_FORM_ROOMS_NUMBER_FIELD_SELECTOR);
   roomsNumberElement.addEventListener('change', onAdFormRoomsNumberChange);
@@ -387,16 +428,31 @@ function configureAdFormFields() {
   configureApartmentTypeField();
   configureRoomsNumberField();
   configureGuestsNumberField();
+  configureCheckInCheckoutFields();
 }
 
 function hideMap() {
   mapElement.classList.add(MAP_FADE_CLASS);
 }
 
+function hidePinCardPopup() {
+  var element = mapElement.querySelector(MAP_CARD_POPUP_SELECTOR);
+  if (element !== null) {
+    element.remove();
+  }
+  document.removeEventListener('keydown', onPopupEscapePress);
+}
+
+function showPinCardPopup(pinData) {
+  var filterElement = document.querySelector(MAP_FILTER_SELECTOR);
+  hidePinCardPopup();
+  mapElement.insertBefore(renderCard(pinData), filterElement);
+  document.addEventListener('keydown', onPopupEscapePress);
+}
+
 function showMap() {
-  renderRandomPins(apartments);
+  renderRandomPins();
   mapElement.classList.remove(MAP_FADE_CLASS);
-  // renderCards(data);
 }
 
 function setDisabledAttributeForFormFieldsets(formElement, disabledFlag) {
@@ -415,7 +471,7 @@ function toggleDisabledStateForAdForm(disabledFlag) {
   }
 }
 
-function setDisabledStateForMapFilterForm(disabledFlag) {
+function toggleDisabledStateForMapFilterForm(disabledFlag) {
   var formElement = document.querySelector(MAP_FILTERS_SELECTOR);
   setDisabledAttributeForFormFieldsets(formElement, disabledFlag);
 }
@@ -424,7 +480,7 @@ function configureActivePageState() {
   isMapActive = true;
   showMap();
   toggleDisabledStateForAdForm(false);
-  setDisabledStateForMapFilterForm(false);
+  toggleDisabledStateForMapFilterForm(false);
   configureAdFormFields();
 }
 
@@ -432,7 +488,7 @@ function configureDisabledPageState() {
   isMapActive = false;
   hideMap();
   toggleDisabledStateForAdForm(true);
-  setDisabledStateForMapFilterForm(true);
+  toggleDisabledStateForMapFilterForm(true);
   configureAddressField();
 }
 
