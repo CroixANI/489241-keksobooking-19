@@ -109,7 +109,7 @@ var apartments;
 var mapElement = document.querySelector(MAP_SELECTOR);
 var adFormElement = document.querySelector(AD_FORM_SELECTOR);
 var mainPinElement = document.querySelector(MAP_MAIN_PIN_SELECTOR);
-var cardTemplate = document.querySelector(CARD_TEMPLATE).content.querySelector(CARD_TEMPLATE_POPUP);
+var cardTemplate = document.querySelector(CARD_TEMPLATE).content;
 var isMapActive = false;
 
 /* ========= RANDOM DATA =========== */
