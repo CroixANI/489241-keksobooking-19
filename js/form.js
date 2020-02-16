@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var MAP_MAIN_PIN_SELECTOR = '.map__pin--main';
+
   var AD_FORM_SELECTOR = '.ad-form';
   var AD_FORM_DISABLED_CLASS = 'ad-form--disabled';
   var AD_FORM_ADDRESS_FIELD_SELECTOR = '#address';
@@ -94,9 +96,9 @@
     roomsNumberElement.addEventListener('change', onAdFormGuestsNumberChange);
   }
 
-  function configureAddressField(disabledFlag) {
+  function configureAddressField() {
     var addressElement = adFormElement.querySelector(AD_FORM_ADDRESS_FIELD_SELECTOR);
-    addressElement.value = window.pins.main.getMainPinAddress(disabledFlag);
+    addressElement.value = window.pins.main.getMainPinAddress();
   }
 
   function configureApartmentTypeField() {
@@ -105,7 +107,7 @@
   }
 
   function configureAdFormFields() {
-    configureAddressField(true);
+    configureAddressField();
     configureApartmentTypeField();
     configureRoomsNumberField();
     configureGuestsNumberField();
@@ -120,11 +122,13 @@
       adFormElement.classList.remove(AD_FORM_DISABLED_CLASS);
     }
 
-    configureAddressField(!disabledFlag);
+    configureAddressField();
   }
 
   configureAdFormFields();
   setPriceMinValue();
+  document.querySelector(MAP_MAIN_PIN_SELECTOR)
+    .addEventListener('positionChanged', configureAddressField, false);
 
   window.form = window.form || {};
   window.form.toggleDisabledState = toggleDisabledState;
