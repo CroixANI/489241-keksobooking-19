@@ -6,6 +6,7 @@
   var MAP_MAIN_PIN_INACTIVE_SIZE = 65;
   var MAP_MAIN_PIN_SELECTOR = '.map__pin--main';
 
+  var event = new Event('positionChanged');
   var mainPinElement = document.querySelector(MAP_MAIN_PIN_SELECTOR);
 
   function onMapMainPinMouseDown(evt) {
@@ -19,9 +20,13 @@
   function configureMapMainPinEventListeners() {
     mainPinElement.addEventListener('mousedown', onMapMainPinMouseDown);
     mainPinElement.addEventListener('keydown', onMapMainPinKeyDown);
+    window.draggable.makeDraggable(mainPinElement, mainPinElement, function () {
+      mainPinElement.dispatchEvent(event);
+    });
   }
 
-  function getMainPinAddress(isPageActive) {
+  function getMainPinAddress() {
+    var isPageActive = window.page.isPageActive();
     var position;
     if (isPageActive) {
       position = {
