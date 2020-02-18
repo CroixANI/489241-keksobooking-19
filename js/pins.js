@@ -8,7 +8,7 @@
   var PIN_TEMPLATE_BUTTON_SELECTOR = '.map__pin';
 
   function onPinClick(evt) {
-    var data = window.data.mocks.getApartmentByIndex(evt.currentTarget.dataset.index);
+    var data = window.data.getApartmentByIndex(evt.currentTarget.dataset.index);
     window.card.showCard(data);
   }
 
@@ -20,7 +20,7 @@
   }
 
   function renderPin(pinTemplate, index) {
-    var apartmentData = window.data.mocks.getApartmentByIndex(index);
+    var apartmentData = window.data.getApartmentByIndex(index);
     var element = pinTemplate.cloneNode(true);
     var center = getPinCenterPosition(apartmentData);
     element.setAttribute('style', 'left: ' + center.x + 'px; top: ' + center.y + 'px;');
@@ -33,16 +33,17 @@
   }
 
   function renderPins() {
-    var mapPinsContainerElement = document.querySelector(PINS_CONTAINER_SELECTOR);
-    var pinTemplate = document.querySelector(PIN_TEMPLATE_SELECTOR).content.querySelector(PIN_TEMPLATE_BUTTON_SELECTOR);
-    var fragment = document.createDocumentFragment();
+    window.data.getApartments(function (apartments) {
+      var mapPinsContainerElement = document.querySelector(PINS_CONTAINER_SELECTOR);
+      var pinTemplate = document.querySelector(PIN_TEMPLATE_SELECTOR).content.querySelector(PIN_TEMPLATE_BUTTON_SELECTOR);
+      var fragment = document.createDocumentFragment();
 
-    var apartments = window.data.mocks.getApartments();
-    for (var i = 0; i < apartments.length; i++) {
-      fragment.appendChild(renderPin(pinTemplate, i));
-    }
+      for (var i = 0; i < apartments.length; i++) {
+        fragment.appendChild(renderPin(pinTemplate, i));
+      }
 
-    mapPinsContainerElement.appendChild(fragment);
+      mapPinsContainerElement.appendChild(fragment);
+    });
   }
 
   window.pins = window.pins || {};
