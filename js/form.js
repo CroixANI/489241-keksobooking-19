@@ -12,6 +12,7 @@
   var AD_FORM_CAPACITY_FIELD_SELECTOR = '#capacity';
   var AD_FORM_CHECK_IN_FIELD_SELECTOR = '#timein';
   var AD_FORM_CHECK_OUT_FIELD_SELECTOR = '#timeout';
+  var AD_FORM_RESET_BUTTON_SELECTOR = '.ad-form__reset';
 
   var ROOMS_TO_GUESTS = {
     '1': 1,
@@ -25,9 +26,13 @@
   var apartmentTypesData = window.data.getApartmentTypesData();
   var adFormElement = document.querySelector(AD_FORM_SELECTOR);
 
+  function onFormResetClick() {
+    adFormElement.reset();
+  }
+
   function onFormSubmit(evt) {
     window.data.submitApartment(new FormData(adFormElement), function () {
-      adFormElement.reset();
+
       window.page.setPageStateToDisabled();
       window.utils.showSuccess();
     });
@@ -121,6 +126,8 @@
     configureRoomsNumberField();
     configureGuestsNumberField();
     configureCheckInCheckoutFields();
+    document.querySelector(AD_FORM_RESET_BUTTON_SELECTOR)
+      .addEventListener('click', onFormResetClick);
   }
 
   function addFormSubmitEventListeners() {
