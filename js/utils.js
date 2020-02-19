@@ -1,47 +1,8 @@
 'use strict';
 
 (function () {
-  function random(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
-
-  function getRandomArrayItem(array) {
-    var index = random(0, array.length - 1);
-    return array[index];
-  }
-
-  // took from here https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
-  function shuffleArray(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-      var swapIndex = random(0, i);
-      var currentItem = array[i];
-      array[i] = array[swapIndex];
-      array[swapIndex] = currentItem;
-    }
-    return array;
-  }
-
-  function getRandomUniqueNumbers(total) {
-    var numbers = [];
-
-    for (var i = 0; i < total; i++) {
-      numbers.push(i + 1);
-    }
-
-    return shuffleArray(numbers);
-  }
-
-  function getRandomArray(initialArray, min) {
-    var result = [];
-    var max = random(min, initialArray.length);
-    var numbers = getRandomUniqueNumbers(max);
-
-    for (var i = 0; i < numbers.length; i++) {
-      result.push(initialArray[numbers[i] - 1]);
-    }
-
-    return result;
-  }
+  var ERROR_SELECTOR = '.error';
+  var ERROR_HIDDEN_CLASS = 'hidden';
 
   function setDisabledAttributeForFormFieldsets(formElement, disabledFlag) {
     var fieldSetElements = formElement.querySelectorAll('fieldset');
@@ -50,9 +11,19 @@
     }
   }
 
+  function showError(errorMessage) {
+    var errorElement = document.querySelector(ERROR_SELECTOR);
+    errorElement.classList.remove(ERROR_HIDDEN_CLASS);
+    errorElement.textContent = errorMessage;
+  }
+
+  function hideError() {
+    var errorElement = document.querySelector(ERROR_SELECTOR);
+    errorElement.classList.add(ERROR_HIDDEN_CLASS);
+  }
+
   window.utils = window.utils || {};
-  window.utils.random = random;
-  window.utils.getRandomArray = getRandomArray;
-  window.utils.getRandomArrayItem = getRandomArrayItem;
   window.utils.setDisabledAttributeForFormFieldsets = setDisabledAttributeForFormFieldsets;
+  window.utils.showError = showError;
+  window.utils.hideError = hideError;
 })();

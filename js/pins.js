@@ -6,9 +6,10 @@
   var PINS_CONTAINER_SELECTOR = '.map__pins';
   var PIN_TEMPLATE_SELECTOR = '#pin';
   var PIN_TEMPLATE_BUTTON_SELECTOR = '.map__pin';
+  var MAX_PINS_TO_DISPLAY = 5;
 
   function onPinClick(evt) {
-    var data = window.data.mocks.getApartmentByIndex(evt.currentTarget.dataset.index);
+    var data = window.data.getApartmentByIndex(evt.currentTarget.dataset.index);
     window.card.showCard(data);
   }
 
@@ -20,8 +21,8 @@
   }
 
   function renderPin(pinTemplate, index) {
-    var apartmentData = window.data.mocks.getApartmentByIndex(index);
-    var element = pinTemplate.cloneNode(true);
+    var apartmentData = window.data.getApartmentByIndex(index);
+    var element = pinTemplate.cloneNode(true).querySelector(PIN_TEMPLATE_BUTTON_SELECTOR);
     var center = getPinCenterPosition(apartmentData);
     element.setAttribute('style', 'left: ' + center.x + 'px; top: ' + center.y + 'px;');
     var imgElement = element.querySelector('img');
@@ -33,16 +34,22 @@
   }
 
   function renderPins() {
-    var mapPinsContainerElement = document.querySelector(PINS_CONTAINER_SELECTOR);
-    var pinTemplate = document.querySelector(PIN_TEMPLATE_SELECTOR).content.querySelector(PIN_TEMPLATE_BUTTON_SELECTOR);
-    var fragment = document.createDocumentFragment();
+    window.data.getApartments(function (apartments) {
+      var mapPinsContainerElement = document.querySelector(PINS_CONTAINER_SELECTOR);
+      var pinTemplate = document.querySelector(PIN_TEMPLATE_SELECTOR).content;
+      var fragment = document.createDocumentFragment();
 
-    var apartments = window.data.mocks.getApartments();
-    for (var i = 0; i < apartments.length; i++) {
-      fragment.appendChild(renderPin(pinTemplate, i));
-    }
+      var max = apartments.length;
+      if (max > MAX_PINS_TO_DISPLAY) {
+        max = MAX_PINS_TO_DISPLAY;
+      }
 
-    mapPinsContainerElement.appendChild(fragment);
+      for (var i = 0; i < max; i++) {
+        fragment.appendChild(renderPin(pinTemplate, i));
+      }
+
+      mapPinsContainerElement.appendChild(fragment);
+    });
   }
 
   window.pins = window.pins || {};

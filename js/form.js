@@ -22,7 +22,7 @@
   var NOT_FOR_GUESTS_FLAG = 0;
   var MESSAGE_INCORRECT_GUESTS_NUMBER = 'Не верное число гостей.';
 
-  var apartmentTypesData = window.data.mocks.getApartmentTypesData();
+  var apartmentTypesData = window.data.getApartmentTypesData();
   var adFormElement = document.querySelector(AD_FORM_SELECTOR);
 
   function onAdFormApartmentTypeChange(evt) {

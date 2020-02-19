@@ -22,8 +22,8 @@
   var CARD_PHOTO_SELECTOR = '.popup__photo';
   var CARD_AVATAR_SELECTOR = '.popup__avatar';
 
-  var features = window.data.mocks.getFeatures();
-  var apartmentTypesData = window.data.mocks.getApartmentTypesData();
+  var features = window.data.getFeatures();
+  var apartmentTypesData = window.data.getApartmentTypesData();
   var filterElement = document.querySelector(MAP_FILTER_SELECTOR);
   var mapElement = document.querySelector(MAP_SELECTOR);
   var cardTemplate = document.querySelector(CARD_TEMPLATE).content;
