@@ -6,6 +6,7 @@
   var PINS_CONTAINER_SELECTOR = '.map__pins';
   var PIN_TEMPLATE_SELECTOR = '#pin';
   var PIN_TEMPLATE_BUTTON_SELECTOR = '.map__pin';
+  var MAX_PINS_TO_DISPLAY = 5;
 
   function onPinClick(evt) {
     var data = window.data.getApartmentByIndex(evt.currentTarget.dataset.index);
@@ -38,7 +39,12 @@
       var pinTemplate = document.querySelector(PIN_TEMPLATE_SELECTOR).content.querySelector(PIN_TEMPLATE_BUTTON_SELECTOR);
       var fragment = document.createDocumentFragment();
 
-      for (var i = 0; i < apartments.length; i++) {
+      var max = apartments.length;
+      if (max > MAX_PINS_TO_DISPLAY) {
+        max = MAX_PINS_TO_DISPLAY;
+      }
+
+      for (var i = 0; i < max; i++) {
         fragment.appendChild(renderPin(pinTemplate, i));
       }
 

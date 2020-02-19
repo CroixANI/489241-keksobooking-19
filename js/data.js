@@ -27,18 +27,14 @@
   var apartments;
 
   function getApartments(onLoad) {
-    if (!apartments) {
-      window.backend.load(PINS_DATA_URL, function (data) {
-        if (data instanceof Array) {
-          apartments = data;
-          onLoad(apartments);
-        } else {
-          window.utils.showError('Unable to load data.');
-        }
-      }, window.utils.showError);
-    } else {
-      onLoad(apartments);
-    }
+    window.backend.load(PINS_DATA_URL, function (data) {
+      if (data instanceof Array) {
+        apartments = data;
+        onLoad(data);
+      } else {
+        window.utils.showError('Unable to load data.');
+      }
+    }, window.utils.showError);
   }
 
   function getApartmentByIndex(index) {
