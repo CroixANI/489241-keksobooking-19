@@ -22,7 +22,7 @@
 
   function renderPin(pinTemplate, index) {
     var apartmentData = window.data.getApartmentByIndex(index);
-    var element = pinTemplate.cloneNode(true);
+    var element = pinTemplate.cloneNode(true).querySelector(PIN_TEMPLATE_BUTTON_SELECTOR);
     var center = getPinCenterPosition(apartmentData);
     element.setAttribute('style', 'left: ' + center.x + 'px; top: ' + center.y + 'px;');
     var imgElement = element.querySelector('img');
@@ -36,7 +36,7 @@
   function renderPins() {
     window.data.getApartments(function (apartments) {
       var mapPinsContainerElement = document.querySelector(PINS_CONTAINER_SELECTOR);
-      var pinTemplate = document.querySelector(PIN_TEMPLATE_SELECTOR).content.querySelector(PIN_TEMPLATE_BUTTON_SELECTOR);
+      var pinTemplate = document.querySelector(PIN_TEMPLATE_SELECTOR).content;
       var fragment = document.createDocumentFragment();
 
       var max = apartments.length;
