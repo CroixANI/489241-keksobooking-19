@@ -25,6 +25,15 @@
   var apartmentTypesData = window.data.getApartmentTypesData();
   var adFormElement = document.querySelector(AD_FORM_SELECTOR);
 
+  function onFormSubmit(evt) {
+    window.data.submitApartment(new FormData(adFormElement), function () {
+      adFormElement.reset();
+      window.page.setPageStateToDisabled();
+      window.utils.showSuccess();
+    });
+    evt.preventDefault();
+  }
+
   function onAdFormApartmentTypeChange(evt) {
     setPriceMinValue(evt.currentTarget.value);
   }
@@ -114,21 +123,35 @@
     configureCheckInCheckoutFields();
   }
 
+  function addFormSubmitEventListeners() {
+    adFormElement.addEventListener('submit', onFormSubmit);
+  }
+
+  function removeFormSubmitEventListeners() {
+    adFormElement.removeEventListener('submit', onFormSubmit);
+  }
+
   function toggleDisabledState(disabledFlag) {
     window.utils.setDisabledAttributeForFormFieldsets(adFormElement, disabledFlag);
     if (disabledFlag) {
+      removeFormSubmitEventListeners();
       adFormElement.classList.add(AD_FORM_DISABLED_CLASS);
     } else {
+      addFormSubmitEventListeners();
       adFormElement.classList.remove(AD_FORM_DISABLED_CLASS);
     }
 
     configureAddressField();
   }
 
-  configureAdFormFields();
-  setPriceMinValue();
-  document.querySelector(MAP_MAIN_PIN_SELECTOR)
-    .addEventListener('positionChanged', configureAddressField, false);
+  function initialize() {
+    configureAdFormFields();
+    setPriceMinValue();
+    document.querySelector(MAP_MAIN_PIN_SELECTOR)
+      .addEventListener('positionChanged', configureAddressField, false);
+  }
+
+  initialize();
 
   window.form = window.form || {};
   window.form.toggleDisabledState = toggleDisabledState;
