@@ -31,12 +31,12 @@
   }
 
   function onFormSubmit(evt) {
+    evt.preventDefault();
     window.data.submitApartment(new FormData(adFormElement), function () {
-
+      onFormResetClick();
       window.page.setPageStateToDisabled();
       window.utils.showSuccess();
     });
-    evt.preventDefault();
   }
 
   function onAdFormApartmentTypeChange(evt) {
