@@ -27,14 +27,13 @@
   var adFormElement = document.querySelector(AD_FORM_SELECTOR);
 
   function onFormResetClick() {
-    adFormElement.reset();
+    window.page.setPageStateToDisabled();
   }
 
   function onFormSubmit(evt) {
     evt.preventDefault();
     window.data.submitApartment(new FormData(adFormElement), function () {
       onFormResetClick();
-      window.page.setPageStateToDisabled();
       window.utils.showSuccess();
     });
   }
@@ -141,6 +140,7 @@
   function toggleDisabledState(disabledFlag) {
     window.utils.setDisabledAttributeForFormFieldsets(adFormElement, disabledFlag);
     if (disabledFlag) {
+      adFormElement.reset();
       removeFormSubmitEventListeners();
       adFormElement.classList.add(AD_FORM_DISABLED_CLASS);
     } else {
