@@ -7,6 +7,8 @@ window.page.setOnPageStateChangedListener(function (isActive) {
     window.map.filter.toggleDisabledState(false);
   } else {
     window.map.hideMap();
+    window.pins.removePins();
+    window.pins.main.resetPosition();
     window.form.toggleDisabledState(true);
     window.map.filter.toggleDisabledState(true);
   }

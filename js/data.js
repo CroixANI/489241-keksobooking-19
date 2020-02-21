@@ -2,6 +2,7 @@
 
 (function () {
   var PINS_DATA_URL = 'https://js.dump.academy/keksobooking/data';
+  var SUBMIT_URL = 'https://js.dump.academy/keksobooking';
 
   // data constants
   var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
@@ -52,9 +53,14 @@
     return APARTMENT_TYPES_DATA;
   }
 
+  function submitApartment(data, onLoad) {
+    window.backend.save(SUBMIT_URL, data, onLoad, window.utils.showError);
+  }
+
   window.data = window.data || {};
   window.data.getFeatures = getFeatures;
   window.data.getApartmentTypesData = getApartmentTypesData;
   window.data.getApartments = getApartments;
   window.data.getApartmentByIndex = getApartmentByIndex;
+  window.data.submitApartment = submitApartment;
 })();

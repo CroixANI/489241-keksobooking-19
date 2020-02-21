@@ -12,6 +12,7 @@
   var AD_FORM_CAPACITY_FIELD_SELECTOR = '#capacity';
   var AD_FORM_CHECK_IN_FIELD_SELECTOR = '#timein';
   var AD_FORM_CHECK_OUT_FIELD_SELECTOR = '#timeout';
+  var AD_FORM_RESET_BUTTON_SELECTOR = '.ad-form__reset';
 
   var ROOMS_TO_GUESTS = {
     '1': 1,
@@ -24,6 +25,18 @@
 
   var apartmentTypesData = window.data.getApartmentTypesData();
   var adFormElement = document.querySelector(AD_FORM_SELECTOR);
+
+  function onFormResetClick() {
+    window.page.setPageStateToDisabled();
+  }
+
+  function onFormSubmit(evt) {
+    evt.preventDefault();
+    window.data.submitApartment(new FormData(adFormElement), function () {
+      onFormResetClick();
+      window.utils.showSuccess();
+    });
+  }
 
   function onAdFormApartmentTypeChange(evt) {
     setPriceMinValue(evt.currentTarget.value);
@@ -112,23 +125,40 @@
     configureRoomsNumberField();
     configureGuestsNumberField();
     configureCheckInCheckoutFields();
+    document.querySelector(AD_FORM_RESET_BUTTON_SELECTOR)
+      .addEventListener('click', onFormResetClick);
+  }
+
+  function addFormSubmitEventListeners() {
+    adFormElement.addEventListener('submit', onFormSubmit);
+  }
+
+  function removeFormSubmitEventListeners() {
+    adFormElement.removeEventListener('submit', onFormSubmit);
   }
 
   function toggleDisabledState(disabledFlag) {
     window.utils.setDisabledAttributeForFormFieldsets(adFormElement, disabledFlag);
     if (disabledFlag) {
+      adFormElement.reset();
+      removeFormSubmitEventListeners();
       adFormElement.classList.add(AD_FORM_DISABLED_CLASS);
     } else {
+      addFormSubmitEventListeners();
       adFormElement.classList.remove(AD_FORM_DISABLED_CLASS);
     }
 
     configureAddressField();
   }
 
-  configureAdFormFields();
-  setPriceMinValue();
-  document.querySelector(MAP_MAIN_PIN_SELECTOR)
-    .addEventListener('positionChanged', configureAddressField, false);
+  function initialize() {
+    configureAdFormFields();
+    setPriceMinValue();
+    document.querySelector(MAP_MAIN_PIN_SELECTOR)
+      .addEventListener('positionChanged', configureAddressField, false);
+  }
+
+  initialize();
 
   window.form = window.form || {};
   window.form.toggleDisabledState = toggleDisabledState;
