@@ -3,6 +3,7 @@
 (function () {
   var PINS_DATA_URL = 'https://js.dump.academy/keksobooking/data';
   var SUBMIT_URL = 'https://js.dump.academy/keksobooking';
+  var ANY_HOUSING_TYPE = 'any';
 
   // data constants
   var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
@@ -65,7 +66,7 @@
 
   function applyFilter(filter) {
     apartments = initialApartments.filter(function (apartment) {
-      if (filter.housingType !== 'any' && apartment.offer.type !== filter.housingType) {
+      if (filter.housingType !== ANY_HOUSING_TYPE && apartment.offer.type !== filter.housingType) {
         return false;
       }
 
