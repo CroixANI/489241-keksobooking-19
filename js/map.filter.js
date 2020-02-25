@@ -9,6 +9,7 @@
 
   function renderFilteredData() {
     window.data.applyFilter(getFilter());
+    window.card.hideCard();
     window.pins.renderPins();
   }
 

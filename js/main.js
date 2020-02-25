@@ -8,6 +8,7 @@ window.page.setOnPageStateChangedListener(function (isActive) {
       window.map.showMap();
     });
   } else {
+    window.card.hideCard();
     window.map.hideMap();
     window.pins.removePins();
     window.pins.main.resetPosition();

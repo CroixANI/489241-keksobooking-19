@@ -29,11 +29,11 @@
   var cardTemplate = document.querySelector(CARD_TEMPLATE).content;
 
   function onCardEscapeKeydown(evt) {
-    window.utils.events.isEscapeEvent(evt, hidePinCardPopup);
+    window.utils.events.isEscapeEvent(evt, hideCard);
   }
 
   function onCardCloseButtonClick() {
-    hidePinCardPopup();
+    hideCard();
   }
 
   function fillPhotos(cardElement, apartmentData) {
@@ -91,7 +91,7 @@
     return cardElement;
   }
 
-  function hidePinCardPopup() {
+  function hideCard() {
     var element = mapElement.querySelector(CARD_SELECTOR);
     if (element !== null) {
       element.remove();
@@ -100,11 +100,12 @@
   }
 
   function showCard(pinData) {
-    hidePinCardPopup();
+    hideCard();
     mapElement.insertBefore(renderCard(pinData), filterElement);
     document.addEventListener('keydown', onCardEscapeKeydown);
   }
 
   window.card = window.card || {};
   window.card.showCard = showCard;
+  window.card.hideCard = hideCard;
 })();
