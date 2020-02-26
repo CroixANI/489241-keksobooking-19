@@ -3,7 +3,7 @@
 (function () {
   var PINS_DATA_URL = 'https://js.dump.academy/keksobooking/data';
   var SUBMIT_URL = 'https://js.dump.academy/keksobooking';
-  var ANY_HOUSING_TYPE = 'any';
+  var ANY_VALUE = 'any';
 
   // data constants
   var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
@@ -36,7 +36,9 @@
   function loadData(onLoad) {
     window.backend.load(PINS_DATA_URL, function (data) {
       if (data instanceof Array) {
-        initialApartments = data;
+        initialApartments = data.filter(function (item) {
+          return item.hasOwnProperty('offer');
+        });
         apartments = initialApartments.slice();
         onLoad();
       } else {
@@ -66,7 +68,29 @@
 
   function applyFilter(filter) {
     apartments = initialApartments.filter(function (apartment) {
-      if (filter.housingType !== ANY_HOUSING_TYPE && apartment.offer.type !== filter.housingType) {
+      if (filter.housingType !== ANY_VALUE && apartment.offer.type !== filter.housingType) {
+        return false;
+      }
+
+      if (filter.priceRange !== null
+        && (apartment.offer.price < filter.priceRange.min
+          || (apartment.offer.price >= filter.priceRange.max && filter.priceRange.max !== 0))) {
+        return false;
+      }
+
+      if (filter.roomsNumber !== ANY_VALUE && apartment.offer.rooms.toString() !== filter.roomsNumber) {
+        return false;
+      }
+
+      if (filter.guestsNumber !== ANY_VALUE && apartment.offer.guests.toString() !== filter.guestsNumber) {
+        return false;
+      }
+
+      var apartmentFeatures = apartment.offer.features || [];
+      var hasAllFeatures = filter.features.filter(function (feature) {
+        return apartmentFeatures.indexOf(feature) >= 0;
+      }).length === filter.features.length;
+      if (filter.features.length > 0 && hasAllFeatures === false) {
         return false;
       }
 
