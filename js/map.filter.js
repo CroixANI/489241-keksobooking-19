@@ -33,9 +33,11 @@
   var featuresElements = document.querySelectorAll(MAP_FILTER_FEATUERS_SELECTOR);
 
   function renderFilteredData() {
-    window.data.applyFilter(getFilter());
-    window.card.hideCard();
-    window.pins.renderPins();
+    window.debounce(function () {
+      window.data.applyFilter(getFilter());
+      window.card.hideCard();
+      window.pins.renderPins();
+    })();
   }
 
   function onHousingTypeChange() {
