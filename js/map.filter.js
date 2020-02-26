@@ -19,12 +19,20 @@
     }
   }
 
-  function addEventListeners() {
+  function addHousingTypeChangeEventListener() {
     housingTypeElement.addEventListener('change', onHousingTypeChange);
   }
 
-  function removeEventListeners() {
+  function removeHousingTypeChangeEventListener() {
     housingTypeElement.removeEventListener('change', onHousingTypeChange);
+  }
+
+  function addEventListeners() {
+    addHousingTypeChangeEventListener();
+  }
+
+  function removeEventListeners() {
+    removeHousingTypeChangeEventListener();
   }
 
   function toggleDisabledState(disabledFlag) {
