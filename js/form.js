@@ -13,6 +13,14 @@
   var AD_FORM_CHECK_IN_FIELD_SELECTOR = '#timein';
   var AD_FORM_CHECK_OUT_FIELD_SELECTOR = '#timeout';
   var AD_FORM_RESET_BUTTON_SELECTOR = '.ad-form__reset';
+  var AD_FORM_AVATAR_FILE_SELECTOR = '.ad-form__field input[type=file]';
+  var AD_FORM_AVATAR_PREVIEW_SELECTOR = '.ad-form-header__preview img';
+  var AD_FORM_APARTMENT_FILE_SELECTOR = '.ad-form__upload input[type=file]';
+  var AD_FORM_APARTMENT_PREVIEW_CONTAINER_SELECTOR = '.ad-form__photo-container';
+  var AD_FORM_APARTMENT_PREVIEW_SELECTOR = '.ad-form__photo';
+  var AD_FORM_APARTMENT_PREVIEW_SIZE = '70px';
+  var AD_FORM_APARTMENT_PREVIEW_CLASS = 'popup__photo';
+  var AD_FORM_APARTMENT_PREVIEW_ALT = 'Фотография жилья';
 
   var ROOMS_TO_GUESTS = {
     '1': 1,
@@ -25,6 +33,11 @@
 
   var apartmentTypesData = window.data.getApartmentTypesData();
   var adFormElement = document.querySelector(AD_FORM_SELECTOR);
+  var adFormAvatarFileElement = document.querySelector(AD_FORM_AVATAR_FILE_SELECTOR);
+  var adFormAvatarPreviewElement = document.querySelector(AD_FORM_AVATAR_PREVIEW_SELECTOR);
+  var adFormApartmentFileElement = document.querySelector(AD_FORM_APARTMENT_FILE_SELECTOR);
+  var adFormNextApartmentPreviewElement = document.querySelector(AD_FORM_APARTMENT_PREVIEW_SELECTOR);
+  var adFormApartmentPreviewContainerElement = document.querySelector(AD_FORM_APARTMENT_PREVIEW_CONTAINER_SELECTOR);
 
   function onFormResetClick() {
     window.page.setPageStateToDisabled();
@@ -154,6 +167,22 @@
   function initialize() {
     configureAdFormFields();
     setPriceMinValue();
+    window.data.addImageLoader(adFormAvatarFileElement, function (image) {
+      adFormAvatarPreviewElement.src = image;
+    });
+    window.data.addImageLoader(adFormApartmentFileElement, function (image) {
+      var imageElement = document.createElement('img');
+      imageElement.src = image;
+      imageElement.alt = AD_FORM_APARTMENT_PREVIEW_ALT;
+      imageElement.classList.add(AD_FORM_APARTMENT_PREVIEW_CLASS);
+      imageElement.style.height = AD_FORM_APARTMENT_PREVIEW_SIZE;
+      imageElement.style.width = AD_FORM_APARTMENT_PREVIEW_SIZE;
+
+      var clone = adFormNextApartmentPreviewElement.cloneNode(true);
+      adFormApartmentPreviewContainerElement.appendChild(clone);
+      adFormNextApartmentPreviewElement.appendChild(imageElement);
+      adFormNextApartmentPreviewElement = clone;
+    });
     document.querySelector(MAP_MAIN_PIN_SELECTOR)
       .addEventListener('positionChanged', configureAddressField, false);
   }
