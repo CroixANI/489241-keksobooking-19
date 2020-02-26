@@ -2,10 +2,13 @@
 
 window.page.setOnPageStateChangedListener(function (isActive) {
   if (isActive) {
-    window.map.showMap();
-    window.form.toggleDisabledState(false);
-    window.map.filter.toggleDisabledState(false);
+    window.data.loadData(function () {
+      window.form.toggleDisabledState(false);
+      window.map.filter.toggleDisabledState(false);
+      window.map.showMap();
+    });
   } else {
+    window.card.hideCard();
     window.map.hideMap();
     window.pins.removePins();
     window.pins.main.resetPosition();

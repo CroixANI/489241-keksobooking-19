@@ -7,7 +7,8 @@
   var PIN_TEMPLATE_SELECTOR = '#pin';
   var PIN_TEMPLATE_BUTTON_SELECTOR = '.map__pin';
   var MAP_MAIN_PIN_CLASS = 'map__pin--main';
-  var MAX_PINS_TO_DISPLAY = 5;
+
+  var mapPinsContainerElement = document.querySelector(PINS_CONTAINER_SELECTOR);
 
   function onPinClick(evt) {
     var data = window.data.getApartmentByIndex(evt.currentTarget.dataset.index);
@@ -35,26 +36,19 @@
   }
 
   function renderPins() {
-    window.data.getApartments(function (apartments) {
-      var mapPinsContainerElement = document.querySelector(PINS_CONTAINER_SELECTOR);
-      var pinTemplate = document.querySelector(PIN_TEMPLATE_SELECTOR).content;
-      var fragment = document.createDocumentFragment();
+    removePins();
+    var pinTemplate = document.querySelector(PIN_TEMPLATE_SELECTOR).content;
+    var fragment = document.createDocumentFragment();
 
-      var max = apartments.length;
-      if (max > MAX_PINS_TO_DISPLAY) {
-        max = MAX_PINS_TO_DISPLAY;
-      }
+    var apartments = window.data.getApartments();
+    for (var i = 0; i < apartments.length; i++) {
+      fragment.appendChild(renderPin(pinTemplate, i));
+    }
 
-      for (var i = 0; i < max; i++) {
-        fragment.appendChild(renderPin(pinTemplate, i));
-      }
-
-      mapPinsContainerElement.appendChild(fragment);
-    });
+    mapPinsContainerElement.appendChild(fragment);
   }
 
   function removePins() {
-    var mapPinsContainerElement = document.querySelector(PINS_CONTAINER_SELECTOR);
     var pins = mapPinsContainerElement.querySelectorAll(PIN_TEMPLATE_BUTTON_SELECTOR);
     for (var i = 0; i < pins.length; i++) {
       if (!pins[i].classList.contains(MAP_MAIN_PIN_CLASS)) {
