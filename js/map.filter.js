@@ -11,16 +11,16 @@
   var MAP_FILTER_SELECTED_FEATURES = '.map__features input:checked';
 
   var PRICE_RANGES = {
-    'any': null,
-    'low': {
+    any: null,
+    low: {
       min: 0,
       max: 10000
     },
-    'middle': {
+    middle: {
       min: 10000,
       max: 50000
     },
-    'high': {
+    high: {
       min: 50000,
       max: 0
     }
