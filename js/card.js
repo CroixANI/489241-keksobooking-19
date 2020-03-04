@@ -71,8 +71,10 @@
     var cardElement = cardTemplate.cloneNode(true);
     cardElement.querySelector(CARD_TITLE_SELECTOR).textContent = apartmentData.offer.title;
     cardElement.querySelector(CARD_ADDRESS_SELECTOR).textContent = apartmentData.offer.address;
-    cardElement.querySelector(CARD_PRICE_SELECTOR).textContent = CARD_PRICE_FORMAT.replace('{{x}}', apartmentData.offer.price);
-    cardElement.querySelector(CARD_TYPE_SELECTOR).textContent = apartmentTypesData[apartmentData.offer.type].title;
+    cardElement.querySelector(CARD_PRICE_SELECTOR).textContent =
+      CARD_PRICE_FORMAT.replace('{{x}}', apartmentData.offer.price);
+    cardElement.querySelector(CARD_TYPE_SELECTOR).textContent =
+      apartmentTypesData[apartmentData.offer.type].title;
     cardElement.querySelector(CARD_CAPACITY_SELECTOR).textContent = CARD_CAPACITY_FORMAT
       .replace('{{rooms}}', apartmentData.offer.rooms)
       .replace('{{guests}}', apartmentData.offer.guests);

@@ -90,11 +90,8 @@
       var hasAllFeatures = filter.features.filter(function (feature) {
         return apartmentFeatures.indexOf(feature) >= 0;
       }).length === filter.features.length;
-      if (filter.features.length > 0 && hasAllFeatures === false) {
-        return false;
-      }
 
-      return true;
+      return !(filter.features.length > 0 && hasAllFeatures === false);
     });
 
     if (filter.maxItems) {

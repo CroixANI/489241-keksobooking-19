@@ -7,8 +7,8 @@
   var MAP_FILTER_HOUSING_PRICE_SELECTOR = '#housing-price';
   var MAP_FILTER_ROOMS_NUMBER_SELECTOR = '#housing-rooms';
   var MAP_FILTER_GUESTS_NUMBER_SELECTOR = '#housing-guests';
-  var MAP_FILTER_FEATUERS_SELECTOR = '.map__features input';
-  var MAP_FILTER_SELECTED_FEATUERS = '.map__features input:checked';
+  var MAP_FILTER_FEATURES_SELECTOR = '.map__features input';
+  var MAP_FILTER_SELECTED_FEATURES = '.map__features input:checked';
 
   var PRICE_RANGES = {
     'any': null,
@@ -30,7 +30,7 @@
   var housingPriceElement = document.querySelector(MAP_FILTER_HOUSING_PRICE_SELECTOR);
   var housingRoomsElement = document.querySelector(MAP_FILTER_ROOMS_NUMBER_SELECTOR);
   var housingGuestsElement = document.querySelector(MAP_FILTER_GUESTS_NUMBER_SELECTOR);
-  var featuresElements = document.querySelectorAll(MAP_FILTER_FEATUERS_SELECTOR);
+  var featuresElements = document.querySelectorAll(MAP_FILTER_FEATURES_SELECTOR);
 
   function renderFilteredData() {
     window.debounce(function () {
@@ -85,6 +85,7 @@
     window.utils.setDisabledAttributeForFormFieldsets(formElement, disabledFlag);
 
     if (disabledFlag) {
+      formElement.reset();
       removeEventListeners();
     } else {
       addEventListeners();
@@ -93,7 +94,7 @@
   }
 
   function getSelectedFeatures() {
-    var selectedElements = document.querySelectorAll(MAP_FILTER_SELECTED_FEATUERS);
+    var selectedElements = document.querySelectorAll(MAP_FILTER_SELECTED_FEATURES);
     var features = [];
     selectedElements.forEach(function (element) {
       features.push(element.value);
