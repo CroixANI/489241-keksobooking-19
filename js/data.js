@@ -66,32 +66,43 @@
     window.backend.save(SUBMIT_URL, data, onLoad, window.utils.showError);
   }
 
+  function doesMatchHousingTypeFilter(filter, apartment) {
+    return filter.housingType === ANY_VALUE
+      || apartment.offer.type !== filter.housingType;
+  }
+
+  function doesMatchToPriceFilter(filter, apartment) {
+    return filter.priceRange === null
+      || (apartment.offer.price >= filter.priceRange.min
+        && (apartment.offer.price < filter.priceRange.max || filter.priceRange.max === 0));
+  }
+
+  function doesMatchToRoomsNumberFilter(filter, apartment) {
+    return filter.roomsNumber === ANY_VALUE
+      || apartment.offer.rooms.toString() === filter.roomsNumber;
+  }
+
+  function doesMatchToGuestsNumberFilter(filter, apartment) {
+    return filter.guestsNumber === ANY_VALUE
+      || apartment.offer.guests.toString() === filter.guestsNumber;
+  }
+
+  function doesMatchToFeaturesFilter(filter, apartment) {
+    var apartmentFeatures = apartment.offer.features || [];
+    var hasAllFeatures = filter.features.filter(function (feature) {
+      return apartmentFeatures.indexOf(feature) >= 0;
+    }).length === filter.features.length;
+
+    return filter.features.length === 0 || hasAllFeatures;
+  }
+
   function applyFilter(filter) {
     apartments = initialApartments.filter(function (apartment) {
-      if (filter.housingType !== ANY_VALUE && apartment.offer.type !== filter.housingType) {
-        return false;
-      }
-
-      if (filter.priceRange !== null
-        && (apartment.offer.price < filter.priceRange.min
-          || (apartment.offer.price >= filter.priceRange.max && filter.priceRange.max !== 0))) {
-        return false;
-      }
-
-      if (filter.roomsNumber !== ANY_VALUE && apartment.offer.rooms.toString() !== filter.roomsNumber) {
-        return false;
-      }
-
-      if (filter.guestsNumber !== ANY_VALUE && apartment.offer.guests.toString() !== filter.guestsNumber) {
-        return false;
-      }
-
-      var apartmentFeatures = apartment.offer.features || [];
-      var hasAllFeatures = filter.features.filter(function (feature) {
-        return apartmentFeatures.indexOf(feature) >= 0;
-      }).length === filter.features.length;
-
-      return !(filter.features.length > 0 && hasAllFeatures === false);
+      return doesMatchHousingTypeFilter(filter, apartment)
+        && doesMatchToPriceFilter(filter, apartment)
+        && doesMatchToRoomsNumberFilter(filter, apartment)
+        && doesMatchToGuestsNumberFilter(filter, apartment)
+        && doesMatchToFeaturesFilter(filter, apartment);
     });
 
     if (filter.maxItems) {
