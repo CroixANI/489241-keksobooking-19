@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
   var MAP_MAIN_PIN_SELECTOR = '.map__pin--main';
 
   var AD_FORM_SELECTOR = '.ad-form';
@@ -164,13 +166,34 @@
     configureAddressField();
   }
 
+  function addImageLoader(element, onLoad) {
+    element.addEventListener('change', function () {
+      var file = element.files[0];
+      var fileName = file.name.toLowerCase();
+
+      var matches = FILE_TYPES.some(function (it) {
+        return fileName.endsWith(it);
+      });
+
+      if (matches) {
+        var reader = new FileReader();
+
+        reader.addEventListener('load', function () {
+          onLoad(reader.result);
+        });
+
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
   function initialize() {
     configureAdFormFields();
     setPriceMinValue();
-    window.data.addImageLoader(adFormAvatarFileElement, function (image) {
+    addImageLoader(adFormAvatarFileElement, function (image) {
       adFormAvatarPreviewElement.src = image;
     });
-    window.data.addImageLoader(adFormApartmentFileElement, function (image) {
+    addImageLoader(adFormApartmentFileElement, function (image) {
       var imageElement = document.createElement('img');
       imageElement.src = image;
       imageElement.alt = AD_FORM_APARTMENT_PREVIEW_ALT;
@@ -189,6 +212,6 @@
 
   initialize();
 
-  window.form = window.form || {};
+  window.form = {};
   window.form.toggleDisabledState = toggleDisabledState;
 })();

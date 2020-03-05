@@ -65,6 +65,6 @@
     });
   }
 
-  window.draggable = window.draggable || {};
+  window.draggable = {};
   window.draggable.makeDraggable = makeDraggable;
 })();

@@ -15,7 +15,7 @@
     mapElement.classList.remove(MAP_FADE_CLASS);
   }
 
-  window.map = window.map || {};
+  window.map = {};
   window.map.showMap = showMap;
   window.map.hideMap = hideMap;
 })();

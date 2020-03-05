@@ -113,7 +113,7 @@
     };
   }
 
-  window.map = window.map || {};
+  window.map.filter = {};
   window.map.filter = window.map.filter || {};
   window.map.filter.toggleDisabledState = toggleDisabledState;
 })();

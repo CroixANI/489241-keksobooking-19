@@ -47,7 +47,7 @@
     sendAjax(url, data, onLoad, onError);
   }
 
-  window.backend = window.backend || {};
+  window.backend = {};
   window.backend.load = load;
   window.backend.save = save;
 })();

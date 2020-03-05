@@ -58,7 +58,7 @@
     pins = null;
   }
 
-  window.pins = window.pins || {};
+  window.pins = {};
   window.pins.renderPins = renderPins;
   window.pins.removePins = removePins;
 })();

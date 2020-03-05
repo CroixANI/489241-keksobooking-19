@@ -56,8 +56,7 @@
 
   configureMapMainPinEventListeners();
 
-  window.pins = window.pins || {};
-  window.pins.main = window.pins.main || {};
+  window.pins.main = {};
   window.pins.main.getMainPinAddress = getMainPinAddress;
   window.pins.main.resetPosition = resetPosition;
 })();

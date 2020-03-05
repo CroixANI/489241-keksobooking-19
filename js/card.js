@@ -107,7 +107,7 @@
     document.addEventListener('keydown', onCardEscapeKeydown);
   }
 
-  window.card = window.card || {};
+  window.card = {};
   window.card.showCard = showCard;
   window.card.hideCard = hideCard;
 })();

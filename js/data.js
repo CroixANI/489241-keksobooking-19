@@ -68,7 +68,7 @@
 
   function doesMatchHousingTypeFilter(filter, apartment) {
     return filter.housingType === ANY_VALUE
-      || apartment.offer.type !== filter.housingType;
+      || apartment.offer.type === filter.housingType;
   }
 
   function doesMatchToPriceFilter(filter, apartment) {
@@ -110,7 +110,7 @@
     }
   }
 
-  window.data = window.data || {};
+  window.data = {};
   window.data.getFeatures = getFeatures;
   window.data.getApartmentTypesData = getApartmentTypesData;
   window.data.getApartments = getApartments;

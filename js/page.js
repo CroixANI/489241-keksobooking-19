@@ -22,7 +22,7 @@
     onStateChangedAction = action;
   }
 
-  window.page = window.page || {};
+  window.page = {};
   window.page.setPageStateToActive = setPageStateToActive;
   window.page.setPageStateToDisabled = setPageStateToDisabled;
   window.page.isPageActive = isPageActive;

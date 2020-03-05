@@ -61,7 +61,7 @@
     attachDocumentEventListeners();
   }
 
-  window.utils = window.utils || {};
+  window.utils = {};
   window.utils.setDisabledAttributeForFormFieldsets = setDisabledAttributeForFormFieldsets;
   window.utils.showError = showError;
   window.utils.showSuccess = showSuccess;
