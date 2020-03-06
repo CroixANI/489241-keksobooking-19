@@ -5,6 +5,8 @@
   var CONNECTION_ERROR_MESSAGE = 'Connection error.';
   var TIMEOUT_ERROR_MESSAGE = 'Timeout happened.';
   var GENERAL_ERROR_MESSAGE_FORMAT = 'Response error with status = {0} and message = {1}';
+  var POST = 'POST';
+  var GET = 'GET';
 
   function sendAjax(url, data, onLoad, onError) {
     var xhr = new XMLHttpRequest();
@@ -31,10 +33,10 @@
     });
 
     if (data) {
-      xhr.open('POST', url);
+      xhr.open(POST, url);
       xhr.send(data);
     } else {
-      xhr.open('GET', url);
+      xhr.open(GET, url);
       xhr.send();
     }
   }
