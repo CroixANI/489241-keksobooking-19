@@ -92,7 +92,7 @@
     var selectedFeatures = filter.features.filter(function (feature) {
       return apartmentFeatures.indexOf(feature) >= 0;
     });
-    var hasAllFeatures = selectedFeatures.length === filter.features.length
+    var hasAllFeatures = selectedFeatures.length === filter.features.length;
 
     return filter.features.length === 0 || hasAllFeatures;
   }
